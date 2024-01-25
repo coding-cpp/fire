@@ -18,9 +18,23 @@ public:
   ~Parser();
 
   template<typename T>
-  T get(const std::string& key) {
-    return this->config->get_qualified_as<T>(key);
-  }
-};
+  T get(const std::string& key, const T& default_value, const std::string& toml_table = "") {
+    if (toml_table != "") {
+      auto table = this->config->get_table(toml_table);
+      return table->get_as<T>(key).value_or(default_value);
 
+    } else {
+      return this->config->get_as<T>(key).value_or(default_value);
+    }
+  }
+  template<typename T>
+  cpptoml::option<std::vector<T>> get_array(const std::string& key, const std::string& toml_table = "") {
+    if (toml_table != "") {
+      auto table = this->config->get_table(toml_table);
+      return table->get_array_of<T>(key);
+    } else {
+      return this->config->get_array_of<T>(key);
+    }
+  };
+};
 }  // namespace fire
