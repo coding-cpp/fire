@@ -1,4 +1,5 @@
 #include <fire/parser.hpp>
+#include <fire/platform/linux.hpp>
 #include <fire/watch.hpp>
 #include <iostream>
 
@@ -10,5 +11,11 @@ int main() {
   for (auto& item : *jet) {
     std::cout << item << std::endl;
   }
+  std::string path = "/home/akshit/Projects/coding-cpp/fire";  // Change to your directory
+  InotifyWatcher watcher(path);
+  watcher.run();
+
+  return 0;
+
   return 0;
 }
