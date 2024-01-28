@@ -1,21 +1,18 @@
+#include <fire/logger.hpp>
 #include <fire/parser.hpp>
 #include <fire/platform/linux.hpp>
-#include <fire/watch.hpp>
+#include <fire/watcher.hpp>
 #include <iostream>
 
 int main() {
-  fire::Parser parser = fire::Parser();
-  auto ans = parser.get<std::string>("bin", "", "build");
-  std::cout << ans << std::endl;
-  auto jet = parser.get_array<std::string>("post_cmd", "build");
-  for (auto& item : *jet) {
-    std::cout << item << std::endl;
-  }
-  std::string path = "/home/akshit/Projects/coding-cpp/fire";  // Change to your directory
-  InotifyWatcher watcher(path);
-  watcher.run();
-
-  return 0;
+  std::shared_ptr<fire::Parser> parser = std::make_shared<fire::Parser>();
+  std::string path = std::filesystem::current_path().string() + "/" + fire::Parser::get<std::string>("root", ".");
+  fire::Logger logger(fire::Logger::Application::MAIN);
+  logger.log("Starting fire...🔥");
+#ifdef __linux__
+  fire::InotifyWatcher watcher(path);
+  watcher.watch();
+#endif
 
   return 0;
 }
