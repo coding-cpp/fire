@@ -6,7 +6,7 @@
 #include <string>
 
 namespace fire {
-class Watcher {
+class Reloader {
 protected:
   static bool isValidFile(const std::string& filename);
   static bool isValidDirectory(const std::string& path);
@@ -16,8 +16,8 @@ protected:
 
 public:
   virtual void watch() = 0;
-  Watcher();
-  ~Watcher();
+  Reloader();
+  ~Reloader();
 };
 
 }  // namespace fire

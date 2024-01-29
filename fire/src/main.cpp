@@ -1,7 +1,7 @@
 #include <fire/logger.hpp>
 #include <fire/parser.hpp>
-#include <fire/platform/linux.hpp>
-#include <fire/watcher.hpp>
+#include <fire/platform/linux/watcher.hpp>
+#include <fire/reloader.hpp>
 #include <iostream>
 
 int main() {
@@ -10,7 +10,7 @@ int main() {
   fire::Logger logger(fire::Logger::Application::MAIN);
   logger.log("Starting fire...🔥");
 #ifdef __linux__
-  fire::InotifyWatcher watcher(path);
+  fire::Watcher watcher(path);
   watcher.watch();
 #endif
 

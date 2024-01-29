@@ -2,7 +2,7 @@
 
 namespace fire {
 
-Table Parser::config = nullptr;
+Table Parser::config = NULL;
 
 Parser::Parser()
     : Parser(std::filesystem::current_path().string() + "/.fireconfig.toml") {

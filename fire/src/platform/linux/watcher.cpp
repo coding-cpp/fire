@@ -1,9 +1,9 @@
 #ifdef __linux__
-#  include <fire/platform/linux.hpp>
+#  include <fire/platform/linux/watcher.hpp>
 
 namespace fire {
 
-InotifyWatcher::InotifyWatcher(const std::string& path)
+Watcher::Watcher(const std::string& path)
     : rootPath(path) {
   this->fd = inotify_init1(IN_NONBLOCK);
   if (this->fd < 0) {
@@ -21,14 +21,14 @@ InotifyWatcher::InotifyWatcher(const std::string& path)
       this->addWatchRecursively(dir);
 }
 
-InotifyWatcher::~InotifyWatcher() {
+Watcher::~Watcher() {
   for (const auto& pair : this->watchDescriptors) {
     inotify_rm_watch(fd, pair.first);
   }
   close(this->fd);
 }
 
-void InotifyWatcher::addWatch(const std::string& path) {
+void Watcher::addWatch(const std::string& path) {
   int wd = inotify_add_watch(this->fd, path.c_str(), IN_MODIFY | IN_CREATE | IN_DELETE | IN_MOVE);
   if (wd == -1) {
     std::cerr << "Cannot watch '" << path << "': " << strerror(errno) << std::endl;
@@ -37,7 +37,7 @@ void InotifyWatcher::addWatch(const std::string& path) {
   }
 }
 
-void InotifyWatcher::removeWatch(int wd) {
+void Watcher::removeWatch(int wd) {
   if (inotify_rm_watch(this->fd, wd) == -1) {
     std::cerr << "Error removing watch: " << strerror(errno) << std::endl;
   } else {
@@ -45,13 +45,13 @@ void InotifyWatcher::removeWatch(int wd) {
   }
 }
 
-void InotifyWatcher::watch() {
+void Watcher::watch() {
   while (true) {
     this->startWatch();
   }
 }
 
-void InotifyWatcher::startWatch() {
+void Watcher::startWatch() {
   char buffer[4096] __attribute__((aligned(__alignof__(struct inotify_event))));
   const struct inotify_event* event;
   ssize_t length;
@@ -68,7 +68,7 @@ void InotifyWatcher::startWatch() {
   }
 }
 
-void InotifyWatcher::handleEvent(const struct inotify_event* event) {
+void Watcher::handleEvent(const struct inotify_event* event) {
   auto now = std::chrono::steady_clock::now();
   if (event->len) {
     std::string path = this->watchDescriptors[event->wd] + '/' + event->name;
@@ -91,6 +91,7 @@ void InotifyWatcher::handleEvent(const struct inotify_event* event) {
         }
         this->lastModified[path] = now;
         std::cout << "Modified: " << path << std::endl;
+        this->restartProcess();
       }
     } else if (event->mask & IN_MOVED_FROM || event->mask & IN_MOVED_TO) {
       std::cout << "Moved: " << path << std::endl;

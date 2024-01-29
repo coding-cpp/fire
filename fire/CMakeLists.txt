@@ -1,10 +1,18 @@
 #####################################
 # Define Target Information
 #####################################
-set(TARGET_NAME fire)
-set(TARGET_INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/include/platform)
+set (TARGET_NAME fire)
+set (TARGET_INCLUDE_FOLDER 
+      ${CMAKE_CURRENT_SOURCE_DIR}/lib 
+      ${CMAKE_CURRENT_SOURCE_DIR}/include 
+    )
 # set(TARGET_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-file(GLOB TARGET_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/platform/*.cpp)
+file(GLOB TARGET_SOURCES 
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp 
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/platform/linux/*.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/platform/windows/*.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/platform/macos/*.cpp
+    )
 
 #####################################
 # Support IDE Visualization
